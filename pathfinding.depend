@@ -1,0 +1,47 @@
+# depslib dependency file v1.0
+1401472307 source:c:\users\alex\desktop\c++\pathfinding2\src\pathfinding.cpp
+	"pathfinding.h"
+	<iostream>
+	<algorithm>
+	<vector>
+	<string>
+	<cmath>
+	<stdlib.h>
+	<list>
+
+1401377367 c:\users\alex\desktop\c++\pathfinding2\include\pathfinding.h
+	<SFML/Graphics.hpp>
+	<list>
+
+1401389378 source:c:\users\alex\desktop\c++\pathfinding2\main.cpp
+	<iostream>
+	<algorithm>
+	<vector>
+	<string>
+	<cmath>
+	<stdlib.h>
+	<list>
+	"TileScreen.h"
+	<SFML/Graphics.hpp>
+
+1401135622 source:c:\users\alex\desktop\c++\pathfinding2\src\screen.cpp
+	"Screen.h"
+
+1401135622 c:\users\alex\desktop\c++\pathfinding2\include\screen.h
+
+1401395891 source:c:\users\alex\desktop\c++\pathfinding2\src\tilescreen.cpp
+	"TileScreen.h"
+	<SFML/Graphics.hpp>
+	"pathfinding.h"
+	<iostream>
+	<algorithm>
+	<vector>
+	<string>
+	<cmath>
+	<stdlib.h>
+	<list>
+
+1401391935 c:\users\alex\desktop\c++\pathfinding2\include\tilescreen.h
+	<SFML/Graphics.hpp>
+	"pathfinding.h"
+
