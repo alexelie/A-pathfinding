@@ -5,6 +5,8 @@
 #include <string>
 #include <cmath>
 #include <stdlib.h>
+#include <unistd.h>
+#include <sys/time.h>
 #include <list>
 using namespace std;
 
@@ -184,9 +186,8 @@ list<Coord*> findPath(sf::RenderWindow& window,Coord** g,int size_x,int size_y,i
         window.draw(current->element.getSprite());
 
         //TIMER POUR RALENTIR LEXECUTION
-//        time_t t0 = time(NULL);
-//        unsigned tmax = 0;
-//        while(static_cast<unsigned>(time(NULL)-t0) < tmax);
+        unsigned int microseconds = 250000;
+        //usleep(microseconds);
 
         //Si on est arrivé au but
         if (current->element.pos_x == destPos.element.pos_x && current->element.pos_y == destPos.element.pos_y){
@@ -237,9 +238,9 @@ list<Coord*> findPath(sf::RenderWindow& window,Coord** g,int size_x,int size_y,i
 
                 int DistanceFromCurrentToNeighbor;
                 if(!is_diag(current,currNeighbor)){
-                    DistanceFromCurrentToNeighbor = 10;
+                    DistanceFromCurrentToNeighbor = 100;
                 }else{
-                    DistanceFromCurrentToNeighbor = 14;
+                    DistanceFromCurrentToNeighbor = 140;
                 }
 
                 currNeighbor->element.setLengthFromStart(current->element.getLengthFromStart() + DistanceFromCurrentToNeighbor);
@@ -253,6 +254,9 @@ list<Coord*> findPath(sf::RenderWindow& window,Coord** g,int size_x,int size_y,i
 
         }
         window.display();
+
+        current->element.getSprite().setColor(sf::Color::White);
+        window.draw(current->element.getSprite());
     }
     int notFound=1;
     throw notFound;

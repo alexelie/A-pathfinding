@@ -45,7 +45,7 @@
 	<SFML/Graphics.hpp>
 	"pathfinding.h"
 
-1489509513 source:c:\users\alex\desktop\git\pathfinding\src\pathfinding.cpp
+1489516156 source:c:\users\alex\desktop\git\pathfinding\src\pathfinding.cpp
 	"pathfinding.h"
 	<iostream>
 	<algorithm>
@@ -53,6 +53,8 @@
 	<string>
 	<cmath>
 	<stdlib.h>
+	<unistd.h>
+	<sys/time.h>
 	<list>
 
 1489457528 c:\users\alex\desktop\git\pathfinding\include\pathfinding.h
