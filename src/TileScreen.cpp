@@ -14,8 +14,6 @@ TileScreen::TileScreen(int x, int y){
     nbRow=y;
     drawingWalls = false;
 
-    //cpt 1=start point, 2=end point, 3+=walls
-    userEventCount=0;
     //ouverture de la enêtre SFML
     window.create(sf::VideoMode(x*10, y*10), "Pathfinding");
 
@@ -45,7 +43,17 @@ void TileScreen::go(){
                 //Start pathfinder
                 case sf::Event::KeyPressed:
                     if(event.key.code == sf::Keyboard::Return && userEventCount >= 2){
-                        startPathFinder(startColPos,startRowPos,endColPos,endRowPos);
+
+                        if(isDone)
+                        {
+                            displayInitialGrid();
+                            break;
+                        }
+                        else
+                        {
+                            startPathFinder(startColPos,startRowPos,endColPos,endRowPos);
+                            isDone = true;
+                        }
                     }
                 break;
 
@@ -54,24 +62,24 @@ void TileScreen::go(){
 
                     if (event.mouseButton.button == sf::Mouse::Left){
 
-                        if(userEventCount == 0){
+                    if(userEventCount == 0){
 
-                            startColPos = colPos;
-                            startRowPos = rowPos;
-                            graph[rowPos][colPos].element.getSprite().setColor(sf::Color(0,255,0));
+                        startColPos = colPos;
+                        startRowPos = rowPos;
+                        graph[rowPos][colPos].element.getSprite().setColor(sf::Color(0,255,0));
 
-                        }else if(userEventCount == 1){
+                    }else if(userEventCount == 1){
 
-                            endColPos = colPos;
-                            endRowPos = rowPos;
-                            graph[rowPos][colPos].element.getSprite().setColor(sf::Color(255,0,0));
+                        endColPos = colPos;
+                        endRowPos = rowPos;
+                        graph[rowPos][colPos].element.getSprite().setColor(sf::Color(255,0,0));
 
-                        }else if(userEventCount >= 2){
+                    }else if(userEventCount >= 2){
 
-                            drawingWalls = true;
-                        }
+                        drawingWalls = true;
+                    }
 
-                        userEventCount++;
+                    userEventCount++;
                     }
                 break;
 
@@ -119,9 +127,15 @@ void TileScreen::displayInitialGrid(){
 
     window.clear(sf::Color(0,0,0));
 
+    //cpt 1=start point, 2=end point, 3+=walls
+    userEventCount=0;
+    isDone = false;
+    userEventCount = 0;
+
     for(int i=0;i<nbRow;i++){
         for(int j=0;j<nbCol;j++){
             sf::Sprite sprite=graph[i][j].element.getSprite();
+            sprite.setColor(sf::Color::White);
             window.draw(sprite);
         }
     }

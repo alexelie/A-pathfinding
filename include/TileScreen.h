@@ -23,6 +23,7 @@ class TileScreen
         int getHeight();
     protected:
     private:
+        bool isDone = false;
         void updateGrid();
         void initGrid();
         void displayInitialGrid();

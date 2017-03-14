@@ -15,6 +15,7 @@ Node::Node(int x, int y){
 
     //length from start to this + estimate length to end
     priority=0;
+
     lengthFromStart=0;
     estimateToEnd=0;
     come_from=NULL;
@@ -105,8 +106,8 @@ Coord** createGraph(int nbCol,int nbRow){
 }
 
 int heuristicTime(int x1, int y1,int x2,int y2){
-    int width=abs(x1-x2)*10;
-    int height=abs(y1-y2)*10;
+    int width=abs(x1-x2)*1000;
+    int height=abs(y1-y2)*1000;
     int hyp=sqrt(pow(width,2.0)+pow(height,2.0));
     return hyp;
 }
@@ -161,6 +162,7 @@ bool is_diag(Coord* current, Coord* neighbor){
     return false;
 
 }
+
 list<Coord*> findPath(sf::RenderWindow& window,Coord** g,int size_x,int size_y,int xstart,int ystart,int xend,int yend){
 
     //A* lists
@@ -180,6 +182,12 @@ list<Coord*> findPath(sf::RenderWindow& window,Coord** g,int size_x,int size_y,i
         Coord* current = find_maxPriority(open_nodes);
         current->element.getSprite().setColor(sf::Color::Green);
         window.draw(current->element.getSprite());
+
+        //TIMER POUR RALENTIR LEXECUTION
+//        time_t t0 = time(NULL);
+//        unsigned tmax = 0;
+//        while(static_cast<unsigned>(time(NULL)-t0) < tmax);
+
         //Si on est arrivé au but
         if (current->element.pos_x == destPos.element.pos_x && current->element.pos_y == destPos.element.pos_y){
 
