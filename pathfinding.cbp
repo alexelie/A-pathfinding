@@ -13,14 +13,14 @@
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-g" />
-					<Add directory="C:/SFML-2.1/include" />
 					<Add directory="include" />
+					<Add directory="C:/cmake-sfml-2.4.2-install-prefix/include" />
 				</Compiler>
 				<Linker>
 					<Add library="sfml-graphics-d" />
 					<Add library="sfml-window-d" />
 					<Add library="sfml-system-d" />
-					<Add directory="C:/SFML-2.1/lib" />
+					<Add directory="C:/cmake-sfml-2.4.2-install-prefix/lib" />
 				</Linker>
 			</Target>
 			<Target title="Release">

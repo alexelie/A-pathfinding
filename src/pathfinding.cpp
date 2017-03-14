@@ -178,7 +178,8 @@ list<Coord*> findPath(sf::RenderWindow& window,Coord** g,int size_x,int size_y,i
 
         sf::Color color;
         Coord* current = find_maxPriority(open_nodes);
-
+        current->element.getSprite().setColor(sf::Color::Green);
+        window.draw(current->element.getSprite());
         //Si on est arrivé au but
         if (current->element.pos_x == destPos.element.pos_x && current->element.pos_y == destPos.element.pos_y){
 
@@ -217,11 +218,6 @@ list<Coord*> findPath(sf::RenderWindow& window,Coord** g,int size_x,int size_y,i
                 continue;
             }
 
-            //Ajout de couleur au voisin choisi.
-            //currNeighbor->element.getSprite().setColor(sf::Color::Magenta);
-            //window.draw(currNeighbor->element.getSprite());
-            //window.display();
-
             //distance from start du voisin choisi
             int distFromStart = current->element.getLengthFromStart() + heuristicTime(currNeighbor->element.pos_x, currNeighbor->element.pos_y, current->element.pos_x, current->element.pos_y);
             bool is_in_open = coord_in_list(currNeighbor,open_nodes);
@@ -246,8 +242,9 @@ list<Coord*> findPath(sf::RenderWindow& window,Coord** g,int size_x,int size_y,i
                     open_nodes.push_back(currNeighbor);
                 }
             }
-        }
 
+        }
+        window.display();
     }
     int notFound=1;
     throw notFound;
