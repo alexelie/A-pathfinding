@@ -5,28 +5,35 @@
 class TileScreen
 {
     public:
+
         sf::RenderWindow window;
+
+        //doit être un type ** car on ne sait pas d'avance la grandeur du graph
+        //on doit allouer au runtime
         Coord** graph;
         sf::Texture texture;
         sf::Sprite sprite;
         TileScreen(int size_X,int size_y);
-        virtual ~TileScreen();
+        //virtual ~TileScreen();
+        void go();
         void setStart(int x, int y);
         void setEnd(int x, int y);
-        list<Coord*> pathFind(int departX,int departY,int finX,int finY);
+        list<Coord*> startPathFinder(int departX,int departY,int finX,int finY);
         int getWidth();
         int getHeight();
     protected:
     private:
         void updateGrid();
-        int width;
-        int height;
-        int dX;
-        int dY;
-        int eX;
-        int eY;
-        int wX;
-        int wY;
+        void initGrid();
+        void displayInitialGrid();
+        int nbCol;
+        int nbRow;
+        int userEventCount;
+        bool drawingWalls;
+        int startColPos;
+        int startRowPos;
+        int endColPos;
+        int endRowPos;
 };
 
 #endif // TILESCREEN_H

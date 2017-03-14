@@ -8,18 +8,39 @@
 #include <list>
 using namespace std;
 
-Node::Node(){
+Node::Node(int x, int y){
+    setCoord(x, y);
     closed=0;
     wall=false;
-    priority=0;//length from start to this+estimate length to end
+
+    //length from start to this + estimate length to end
+    priority=0;
     lengthFromStart=0;
     estimateToEnd=0;
     come_from=NULL;
-    if (!texture.loadFromFile("tile2.png",sf::IntRect(0,0,10,10))){/*ereur*/cout<<"wo"<<endl;}
+    if (!texture.loadFromFile("tile2.png",sf::IntRect(0,0,9,9))){
+        cout<<"-__-"<<endl;
+    }
     sprite.setTexture(texture);
-    //sprite.setTextureRect(sf::IntRect(10,10, 20, 25));
-
+    sprite.setColor(sf::Color::White);
 }
+
+Node::Node(){
+    closed=0;
+    wall=false;
+
+    //length from start to this+estimate length to end
+    priority=0;
+    lengthFromStart=0;
+    estimateToEnd=0;
+    come_from=NULL;
+    if (!texture.loadFromFile("tile2.png",sf::IntRect(0,0,9,9))){
+        cout<<"-__-"<<endl;
+    }
+    sprite.setTexture(texture);
+    sprite.setColor(sf::Color::White);
+}
+
 sf::Sprite& Node::getSprite(){
     return this->sprite;
 }
@@ -32,7 +53,7 @@ bool Node::getWall(){
 void Node::setCoord(int x, int y){
     this->pos_x=x;
     this->pos_y=y;
-    sprite.setPosition((pos_x*10+2*pos_x),(pos_y*10+2*pos_y));
+    sprite.setPosition((pos_x*10),(pos_y*10));
 }
 void Node::setComeFrom(Coord* c){
     this->come_from=c;
@@ -59,33 +80,31 @@ int Node::getEstimateToEnd(){
     return estimateToEnd;
 }
 void Coord::print(){
-    cout<<"("<<x<<","<<y<<")"<<endl;
+    cout << "(" << this->element.pos_x << "," << this->element.pos_y << ")" << endl;
 }
 bool Coord::operator==(const Coord* rhs){
-    return ((this->x==rhs->x)&&(this->y==rhs->y));
+    return ((this->element.pos_x == rhs->element.pos_x) && (this->element.pos_y == rhs->element.pos_y));
 }
 
 
-Coord** createGraph(int width,int height){//retourne un tableau 2d de Coord aucun obstacle
-    Coord** g=new Coord*[height];
+Coord** createGraph(int nbCol,int nbRow){
+    //retourne référence vers le tableau/graph 2d initial
+    //en principe, les objets Coord devraient être désalloués avant la fin du programme...
+    Coord** g = new Coord*[nbRow];
 
-    for(int i=0;i<height;++i){
-        g[i]=new Coord[width];
-        for(int j=0;j<width;++j){
+    for(int i=0; i<nbRow; ++i){
+
+        g[i] = new Coord[nbCol];
+        for(int j = 0; j < nbCol; ++j){
             Coord c;
-            Node node;
-            c.x=j;
-            c.y=i;
-            //c.id=i+j;
-            c.element=node;
-            c.element.setCoord(j,i);
-            g[i][j]=c;
+            c.element = Node(j, i);
+            g[i][j] = c;
         }
     }
     return g;
 }
 
-int estimateTime(int x1, int y1,int x2,int y2){
+int heuristicTime(int x1, int y1,int x2,int y2){
     int width=abs(x1-x2)*10;
     int height=abs(y1-y2)*10;
     int hyp=sqrt(pow(width,2.0)+pow(height,2.0));
@@ -93,6 +112,7 @@ int estimateTime(int x1, int y1,int x2,int y2){
 }
 
 Coord* find_maxPriority(const list<Coord*>& liste){
+
     Coord* priority;
     Coord* current;
     priority=liste.front();
@@ -107,8 +127,8 @@ Coord* find_maxPriority(const list<Coord*>& liste){
 
 list<Coord*> find_neighbors(Coord** g,int size_x,int size_y,Coord* current){
     list<Coord*> liste;
-    int x=current->x;
-    int y=current->y;
+    int x=current->element.pos_x;
+    int y=current->element.pos_y;
     if(y+1<size_y)liste.push_back(&(g[y+1][x]));
     if(y+1<size_y&&x+1<=size_x)liste.push_back(&(g[y+1][x+1]));
     if(x+1<=size_x)liste.push_back(&(g[y][x+1]));
@@ -120,7 +140,8 @@ list<Coord*> find_neighbors(Coord** g,int size_x,int size_y,Coord* current){
     return liste;
 }
 
-bool coord_in_list(const Coord* coord, const list<Coord*> liste){//utilisé pour chercher un noeud dans un std::list à partir de pointeur
+bool coord_in_list(const Coord* coord, const list<Coord*> liste){
+
     for(list<Coord*>::const_iterator it=liste.begin(); it!=liste.end(); it++){
         Coord* current=*it;
         if(current==coord){
@@ -129,74 +150,99 @@ bool coord_in_list(const Coord* coord, const list<Coord*> liste){//utilisé pour 
     }
     return false;
 }
+
 bool is_diag(Coord* current, Coord* neighbor){
-    if((neighbor->x==(current->x+1)&&neighbor->y==(current->y+1))
-       ||(neighbor->x==(current->x-1)&&neighbor->y==(current->y+1))
-       ||(neighbor->x==(current->x-1)&&neighbor->y==(current->y-1))
-       ||(neighbor->x==(current->x+1)&&neighbor->y==(current->y-1))){
+    if((neighbor->element.pos_x==(current->element.pos_x+1)&&neighbor->element.pos_y==(current->element.pos_y+1))
+       ||(neighbor->element.pos_x==(current->element.pos_x-1)&&neighbor->element.pos_y==(current->element.pos_y+1))
+       ||(neighbor->element.pos_x==(current->element.pos_x-1)&&neighbor->element.pos_y==(current->element.pos_y-1))
+       ||(neighbor->element.pos_x==(current->element.pos_x+1)&&neighbor->element.pos_y==(current->element.pos_y-1))){
         return true;
     }
     return false;
 
 }
-list<Coord*> findPath(sf::RenderWindow& window,Coord** g,int size_x,int size_y,int xstart,int ystart,int xend,int yend){//g est le tableau de coord(struct) contenant les objets nodes et la position
+list<Coord*> findPath(sf::RenderWindow& window,Coord** g,int size_x,int size_y,int xstart,int ystart,int xend,int yend){
+
+    //A* lists
+    //noeuds à vérifier, noeuds déjà vérifiés
     list<Coord*> open_nodes,closed_nodes;
-    int xs=xstart;
-    int ys=ystart;
-    int xe=xend;
-    int ye=yend;
-    Coord start=g[ys][xs];
-    Coord dest=g[ye][xe];
-    start.element.setPriority(estimateTime(xs,ys,xe,ye));
-    open_nodes.push_back(&start);
-    while(open_nodes.empty()!=true){//open_nodes.empty()!=true){
+
+    Coord startPos = g[ystart][xstart];
+    Coord destPos = g[yend][xend];
+
+    startPos.element.setPriority(0 + heuristicTime(xstart,ystart,xend,yend));
+
+    open_nodes.push_back(&startPos);
+
+    while(open_nodes.empty()!= true){
+
         sf::Color color;
-        Coord* current=find_maxPriority(open_nodes);//current est le noeud ds open_node avec la meilleure estimation pour arriver à end node
-        //current->element.getSprite().setColor(color.Cyan);
-        if (current->x==dest.x&&current->y==dest.y){
-            cout<<"PATH FOUND "<<endl;
+        Coord* current = find_maxPriority(open_nodes);
+
+        //Si on est arrivé au but
+        if (current->element.pos_x == destPos.element.pos_x && current->element.pos_y == destPos.element.pos_y){
+
             //reconstruct path
+            //TODO: refactor dans fonction
             list<Coord*> path;
             Coord* curr=current;
             path.push_back(curr);
-            while(curr->element.getComeFrom()!=NULL){
-                curr->print();
-                curr->element.getSprite().setColor(color.Blue);
+
+            while(curr->element.getComeFrom() != NULL){
+
+                curr->element.getSprite().setColor(sf::Color::Blue);
                 curr=curr->element.getComeFrom();
                 path.push_back(curr);
             }
-            curr->print();
-            curr->element.getSprite().setColor(color.Red);
+            curr->element.getSprite().setColor(sf::Color::Red);
             path.push_back(curr);
+
             return path;
         }
+
+        //changement de liste de "à vérifier" vers "vérifié"
         open_nodes.remove(current);
         closed_nodes.push_back(current);
+
         list<Coord*> neighbors=find_neighbors(g,size_x,size_y,current);
+
         //voir ts les voisins et updater priority lengthFromStart estimateToEnd etc...
         for (list<Coord*>::iterator it = neighbors.begin(); it != neighbors.end(); it++){
+
             Coord* currNeighbor=*it;
 
-            bool closed=coord_in_list(currNeighbor,closed_nodes);
-            if (closed == true || currNeighbor->element.getWall()==true)//si le voisin est deja ds closed nodes on fait rien
+            //vérifie que le voisin choisi n'est pas déjà vérifié ou que ce n'est pas un mur
+            bool closed = coord_in_list(currNeighbor,closed_nodes);
+            if (closed == true || currNeighbor->element.getWall() == true){
                 continue;
-            currNeighbor->element.getSprite().setColor(color.Magenta);
-            window.draw(currNeighbor->element.getSprite());
-            window.display();
-            //calculer lengthFromStart
-            //currNeighbor->element.getSprite().setColor(color.Magenta);
-            int priority=current->element.getLengthFromStart()+estimateTime(currNeighbor->x,currNeighbor->y,current->x,current->y);
-            bool open=coord_in_list(currNeighbor,open_nodes);
-            if (open==false || priority<currNeighbor->element.getLengthFromStart()){//si neighbor n'est pas ds open_node ou si la nouv priorité<ancienne priorité du neighbor
-                currNeighbor->element.setComeFrom(current);//on modifie le "parent" du neighbor
-                if(is_diag(current,currNeighbor)==false){//assignation de la nouvelle longueur depuis depart:+2 si horiz ou vert
-                    currNeighbor->element.setLengthFromStart(current->element.getLengthFromStart()+10);
-                    currNeighbor->element.setPriority(currNeighbor->element.getLengthFromStart()+estimateTime(currNeighbor->x,currNeighbor->y,xe,ye));
-                }else{//+3 si diagonal
-                    currNeighbor->element.setLengthFromStart(current->element.getLengthFromStart()+14);
-                    currNeighbor->element.setPriority(currNeighbor->element.getLengthFromStart()+estimateTime(currNeighbor->y,currNeighbor->y,xe,ye));
+            }
+
+            //Ajout de couleur au voisin choisi.
+            //currNeighbor->element.getSprite().setColor(sf::Color::Magenta);
+            //window.draw(currNeighbor->element.getSprite());
+            //window.display();
+
+            //distance from start du voisin choisi
+            int distFromStart = current->element.getLengthFromStart() + heuristicTime(currNeighbor->element.pos_x, currNeighbor->element.pos_y, current->element.pos_x, current->element.pos_y);
+            bool is_in_open = coord_in_list(currNeighbor,open_nodes);
+
+            //on update l'état du voisin seulement si on obtient un distance moins grande venant du currentNode
+            if (is_in_open == false || distFromStart < currNeighbor->element.getLengthFromStart()){
+
+                currNeighbor->element.setComeFrom(current);
+
+                int DistanceFromCurrentToNeighbor;
+                if(!is_diag(current,currNeighbor)){
+                    DistanceFromCurrentToNeighbor = 10;
+                }else{
+                    DistanceFromCurrentToNeighbor = 14;
                 }
-                if(open==false){//si it n'est pas ds open_node, on lajoute
+
+                currNeighbor->element.setLengthFromStart(current->element.getLengthFromStart() + DistanceFromCurrentToNeighbor);
+                currNeighbor->element.setPriority(currNeighbor->element.getLengthFromStart() + heuristicTime(currNeighbor->element.pos_x, currNeighbor->element.pos_y, xend, yend));
+
+                //si le voisin n'est pas déjà dans open_list pour être un candidat à considérer, on l'ajoute
+                if(is_in_open == false){
                     open_nodes.push_back(currNeighbor);
                 }
             }

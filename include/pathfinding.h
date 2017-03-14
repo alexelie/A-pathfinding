@@ -14,8 +14,8 @@ class Node
     int estimateToEnd;
     Coord* come_from;
     public:
+        Node(int x, int y);
         Node();
-        //virtual ~Node();
         sf::Texture texture;
         sf::Sprite sprite;
         int pos_x;
@@ -34,12 +34,13 @@ class Node
         int getEstimateToEnd();
         void setCoord(int x, int y);
 };
+
 struct Coord{
-    int x,y,id;
     Node element;
     void print();
     bool operator==(const Coord* rhs);
 };
+
 Coord** createGraph(int width,int height);
 int estimateTime(int x1, int y1,int x2,int y2);
 Coord* find_maxPriority(const list<Coord*>& liste);

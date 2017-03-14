@@ -9,102 +9,126 @@
 #include <stdlib.h>
 #include <list>
 TileScreen::TileScreen(int x, int y){
-    window.create(sf::VideoMode(720, 720), "Pathfinding");
-    graph=createGraph(x,y);//retourne un pointeur vers un tableau de Coord(noeuds)
-    sf::Color color;
-    /*for(int i=18;i<51;i++){
-        graph[20][i].element.getSprite().setColor(color.Black);
-        graph[20][i].element.setWall(true);
-    }
-    for(int i=23;i<=60;i++){
-        graph[35][i].element.getSprite().setColor(color.Black);
-        graph[35][i].element.setWall(true);
-    }
-    for(int i=5;i<=17;i++){
-        graph[35][i].element.getSprite().setColor(color.Black);
-        graph[35][i].element.setWall(true);
-    }
-    for(int i=5;i<=55;i++){
-        graph[i][35].element.getSprite().setColor(color.Black);
-        graph[i][35].element.setWall(true);
-    }*/
-    width=x;
-    height=y;
-    int cpt=0;
-    updateGrid();
-    //pathFind(dx,dy,ex,ey);
-    while (window.isOpen())
-    {
+
+    nbCol=x;
+    nbRow=y;
+    drawingWalls = false;
+
+    //cpt 1=start point, 2=end point, 3+=walls
+    userEventCount=0;
+    //ouverture de la enêtre SFML
+    window.create(sf::VideoMode(x*10, y*10), "Pathfinding");
+
+    graph=createGraph(x,y);
+    displayInitialGrid();
+}
+
+void TileScreen::go(){
+
+    while (window.isOpen()){
+
         sf::Event event;
-        while (window.pollEvent(event))
-        {
+
+        while (window.pollEvent(event)){
+
             sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+            int colPos=floor(mousePos.x/10);
+            int rowPos=floor(mousePos.y/10);
+
             switch(event.type){
 
+                //Fermeture window
                 case sf::Event::Closed:
                     window.close();
                 break;
+
+                //Start pathfinder
                 case sf::Event::KeyPressed:
-                    if(event.key.code==sf::Keyboard::Return){
-                        pathFind(dX,dY,eX,eY);
-                        updateGrid();
+                    if(event.key.code == sf::Keyboard::Return && userEventCount >= 2){
+                        startPathFinder(startColPos,startRowPos,endColPos,endRowPos);
                     }
                 break;
+
+                //Positionnement des éléments(start point, end point, walls) sur le grid avant de débuter la recherche
                 case sf::Event::MouseButtonPressed:
-                    if (event.mouseButton.button == sf::Mouse::Left)
-                    {
-                        if(cpt==0){
-                            dX=(floor(mousePos.x/10))-(2*(floor(mousePos.x/10)/10));
-                            dY=floor(mousePos.y/10)-(2*(floor(mousePos.y/10)/10));
-                            graph[dY][dX].element.getSprite().setColor(color.Green);
-                            updateGrid();
-                        }else if(cpt==1){
-                            eX=floor(mousePos.x/10)-(2*(floor(mousePos.x/10)/10));
-                            eY=floor(mousePos.y/10)-(2*(floor(mousePos.y/10)/10));
-                            graph[eY][eX].element.getSprite().setColor(color.Red);
-                            updateGrid();
+
+                    if (event.mouseButton.button == sf::Mouse::Left){
+
+                        if(userEventCount == 0){
+
+                            startColPos = colPos;
+                            startRowPos = rowPos;
+                            graph[rowPos][colPos].element.getSprite().setColor(sf::Color(0,255,0));
+
+                        }else if(userEventCount == 1){
+
+                            endColPos = colPos;
+                            endRowPos = rowPos;
+                            graph[rowPos][colPos].element.getSprite().setColor(sf::Color(255,0,0));
+
+                        }else if(userEventCount >= 2){
+
+                            drawingWalls = true;
                         }
-                        cpt++;
+
+                        userEventCount++;
                     }
+                break;
+
+                //Permet de gérer le dessin des murs de façon fluide en gardant le bt gauche de la souris enfoncé
+                case sf::Event::MouseButtonReleased:
+                    if(drawingWalls)
+                        drawingWalls = false;
                 break;
 
                 default:
                 break;
             }
-            if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
-            {
-                sf::Vector2i mousePos = sf::Mouse::getPosition(window);
-                if(cpt>=3){
-                    wX=floor(mousePos.x/10)-(2*(floor(mousePos.x/10)/10));
-                    wY=floor(mousePos.y/10)-(2*(floor(mousePos.y/10)/10));
-                    graph[wY][wX].element.getSprite().setColor(color.Black);
-                    graph[wY][wX].element.setWall(true);
-                    updateGrid();
+
+            //Permet de gérer le dessin des murs de façon fluide en gardant le bt gauche de la souris enfoncé
+            if(drawingWalls && userEventCount >= 2){
+
+                if(!graph[rowPos][colPos].element.wall){
+
+                    graph[rowPos][colPos].element.getSprite().setColor(sf::Color(0,0,0));
+                    graph[rowPos][colPos].element.setWall(true);
                 }
             }
 
+            //update et display du nouvel état dans le window SFML
+            updateGrid();
+
+            //======================================================END WHILE LOOP ==========================================================
+            //===============================================================================================================================
         }
-
-        //window.clear();
-
     }
 }
 
-TileScreen::~TileScreen(){
-    //dtor
-}
 void TileScreen::updateGrid(){
     window.clear();
-    for(int i=0;i<height;i++){
-
-        for(int j=0;j<width;j++){
+    for(int i=0;i<nbRow;i++){
+        for(int j=0;j<nbCol;j++){
             sf::Sprite sprite=graph[j][i].element.getSprite();
             window.draw(sprite);
         }
     }
     window.display();
-
 }
+
+void TileScreen::displayInitialGrid(){
+
+    window.clear(sf::Color(0,0,0));
+
+    for(int i=0;i<nbRow;i++){
+        for(int j=0;j<nbCol;j++){
+            sf::Sprite sprite=graph[i][j].element.getSprite();
+            window.draw(sprite);
+        }
+    }
+
+    window.display();
+}
+
 void TileScreen::setStart(int x, int y){
 
 }
@@ -112,23 +136,21 @@ void TileScreen::setEnd(int x, int y){
 
 }
 int TileScreen::getWidth(){
-    return this->width;
+    return this->nbCol;
 }
 int TileScreen::getHeight(){
-    return this->height;
+    return this->nbRow;
 }
-list<Coord*> TileScreen::pathFind(int departX,int departY,int finX,int finY){
-    int dx=departX;
-    int dy=departY;
-    int ex=finX;
-    int ey=finY;
-    sf::Color color;
+
+list<Coord*> TileScreen::startPathFinder(int departX,int departY,int finX,int finY){
+
+    list<Coord*> path;
     try{
-        list<Coord*> path=findPath(window,this->graph,this->width,this->height,dx,dy,ex,ey);//retourne une liste de Coord(Noeuds) qui menent du point de depart à la fin lance une exception sinon
-        graph[dy][dx].element.getSprite();
-        graph[dy][dx].element.getSprite().setColor(color.Green);
-        graph[ey][ex].element.getSprite();
-        graph[ey][ex].element.getSprite().setColor(color.Red);
+        path=findPath(window,this->graph,this->nbCol,this->nbRow,departX,departY,finX,finY);
+        graph[departY][departX].element.getSprite();
+        graph[departY][departX].element.getSprite().setColor(sf::Color::Green);
+        graph[finY][finX].element.getSprite();
+        graph[finY][finX].element.getSprite().setColor(sf::Color::Red);
         return path;
     }
     catch(int i){
