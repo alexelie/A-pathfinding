@@ -1478,3 +1478,46 @@
 	<string>
 	<vector>
 
+1489615006 source:c:\users\alex\desktop\git\pathfinding\a-pathfinder\main.cpp
+	<iostream>
+	<algorithm>
+	<vector>
+	<string>
+	<cmath>
+	<stdlib.h>
+	<list>
+	"TileScreen.h"
+	<SFML/Graphics.hpp>
+
+1489509513 c:\users\alex\desktop\git\pathfinding\a-pathfinder\include\tilescreen.h
+	<SFML/Graphics.hpp>
+	"pathfinding.h"
+
+1489457528 c:\users\alex\desktop\git\pathfinding\a-pathfinder\include\pathfinding.h
+	<SFML/Graphics.hpp>
+	<list>
+
+1489615097 source:c:\users\alex\desktop\git\pathfinding\a-pathfinder\src\tilescreen.cpp
+	"TileScreen.h"
+	<SFML/Graphics.hpp>
+	"pathfinding.h"
+	<iostream>
+	<algorithm>
+	<vector>
+	<string>
+	<cmath>
+	<stdlib.h>
+	<list>
+
+1489614079 source:c:\users\alex\desktop\git\pathfinding\a-pathfinder\src\pathfinding.cpp
+	"pathfinding.h"
+	<iostream>
+	<algorithm>
+	<vector>
+	<string>
+	<cmath>
+	<stdlib.h>
+	<unistd.h>
+	<sys/time.h>
+	<list>
+

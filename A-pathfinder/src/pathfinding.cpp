@@ -108,8 +108,8 @@ Coord** createGraph(int nbCol,int nbRow){
 }
 
 int heuristicTime(int x1, int y1,int x2,int y2){
-    int width=abs(x1-x2)*1000;
-    int height=abs(y1-y2)*1000;
+    int width=abs(x1-x2)*500;
+    int height=abs(y1-y2)*500;
     int hyp=sqrt(pow(width,2.0)+pow(height,2.0));
     return hyp;
 }
@@ -186,8 +186,8 @@ list<Coord*> findPath(sf::RenderWindow& window,Coord** g,int size_x,int size_y,i
         window.draw(current->element.getSprite());
 
         //TIMER POUR RALENTIR LEXECUTION
-        unsigned int microseconds = 250000;
-        //usleep(microseconds);
+        unsigned int microseconds = 15000;
+        usleep(microseconds);
 
         //Si on est arrivé au but
         if (current->element.pos_x == destPos.element.pos_x && current->element.pos_y == destPos.element.pos_y){
@@ -238,9 +238,9 @@ list<Coord*> findPath(sf::RenderWindow& window,Coord** g,int size_x,int size_y,i
 
                 int DistanceFromCurrentToNeighbor;
                 if(!is_diag(current,currNeighbor)){
-                    DistanceFromCurrentToNeighbor = 100;
+                    DistanceFromCurrentToNeighbor = 10;
                 }else{
-                    DistanceFromCurrentToNeighbor = 140;
+                    DistanceFromCurrentToNeighbor = 7;
                 }
 
                 currNeighbor->element.setLengthFromStart(current->element.getLengthFromStart() + DistanceFromCurrentToNeighbor);

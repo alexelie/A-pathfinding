@@ -29,9 +29,9 @@ void TileScreen::go(){
 
         while (window.pollEvent(event)){
 
-            sf::Vector2i mousePos = sf::Mouse::getPosition(window);
-            int colPos=floor(mousePos.x/10);
-            int rowPos=floor(mousePos.y/10);
+            sf::Vector2i mousePos;
+            int colPos;
+            int rowPos;
 
             switch(event.type){
 
@@ -59,6 +59,10 @@ void TileScreen::go(){
 
                 //Positionnement des éléments(start point, end point, walls) sur le grid avant de débuter la recherche
                 case sf::Event::MouseButtonPressed:
+
+                    mousePos = sf::Mouse::getPosition(window);
+                    colPos=floor(mousePos.x/10);
+                    rowPos=floor(mousePos.y/10);
 
                     if (event.mouseButton.button == sf::Mouse::Left){
 
@@ -96,6 +100,10 @@ void TileScreen::go(){
             //Permet de gérer le dessin des murs de façon fluide en gardant le bt gauche de la souris enfoncé
             if(drawingWalls && userEventCount >= 2){
 
+                mousePos = sf::Mouse::getPosition(window);
+                colPos=floor(mousePos.x/10);
+                rowPos=floor(mousePos.y/10);
+
                 if(!graph[rowPos][colPos].element.wall){
 
                     graph[rowPos][colPos].element.getSprite().setColor(sf::Color(0,0,0));
@@ -116,7 +124,7 @@ void TileScreen::updateGrid(){
     window.clear();
     for(int i=0;i<nbRow;i++){
         for(int j=0;j<nbCol;j++){
-            sf::Sprite sprite=graph[j][i].element.getSprite();
+            sf::Sprite sprite=graph[i][j].element.getSprite();
             window.draw(sprite);
         }
     }
@@ -132,14 +140,24 @@ void TileScreen::displayInitialGrid(){
     isDone = false;
     userEventCount = 0;
 
-    for(int i=0;i<nbRow;i++){
-        for(int j=0;j<nbCol;j++){
-            sf::Sprite sprite=graph[i][j].element.getSprite();
-            sprite.setColor(sf::Color::White);
+    for(int i=0;i<nbRow;i++)
+    {
+        for(int j=0;j<nbCol;j++)
+        {
+            sf::Sprite& sprite=graph[i][j].element.getSprite();
+            //pour mettre des murs sur le côté au départ
+            if((j == 0 || j == (nbCol - 1)) || (i == 0 || i == (nbRow - 1)))
+            {
+                sprite.setColor(sf::Color::Black);
+                graph[i][j].element.setWall(true);
+            }
+            else
+            {
+                sprite.setColor(sf::Color::White);
+            }
             window.draw(sprite);
         }
     }
-
     window.display();
 }
 
